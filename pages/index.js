@@ -132,7 +132,7 @@ export default function Home() {
         className={styles.summerGif}
       />
 
-      <h2 className={styles.header}>Authors</h2>
+      <h2 className={styles.header}>Autoren</h2>
       {loading ? (
         <Loader />
       ) : (
