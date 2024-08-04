@@ -1,5 +1,5 @@
 .container {
-  font-family: Arial, sans-serif;
+  font-family: 'Comic Sans MS', cursive, sans-serif;
   margin: 20px;
   background: linear-gradient(to right, #ffecd2, #fcb69f);
   min-height: 100vh;
@@ -39,11 +39,12 @@
 
 .frequentSong {
   text-align: center;
-  background: #ffebcd;
+  background: #f6ff00;
   margin: 20px 0;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  font-size: 2em;
 }
 
 .link {
@@ -98,4 +99,28 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+.authorItem h3 {
+  font-size: 1.5em;
+  color: #ff6347;
+}
+
+.authorItem ol {
+  padding-left: 20px;
+}
+
+.authorItem li {
+  background: #ffe4b5;
+  margin: 5px 0;
+  padding: 5px;
+  border-radius: 3px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.summerGif {
+  display: block;
+  margin: 20px auto;
+  max-width: 100%;
+  border-radius: 10px;
 }

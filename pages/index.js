@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { fetchAuthorLinks, fetchTop10Lists } from '../src/lib/scraper';
-import { aggregateTop10Lists, getMostFrequentSong } from '../src/lib/aggregate';
-import styles from '../styles/Home.module.css';
+import { useEffect, useState } from "react";
+import { fetchAuthorLinks, fetchTop10Lists } from "../src/lib/scraper";
+import { aggregateTop10Lists, getMostFrequentSong } from "../src/lib/aggregate";
+import styles from "../styles/Home.module.css";
 
 const Loader = () => (
   <div className={styles.loader}>
@@ -30,6 +30,7 @@ export default function Home() {
   const [authorLinks, setAuthorLinks] = useState([]);
   const [mostFrequentSong, setMostFrequentSong] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authorTop10s, setAuthorTop10s] = useState({});
 
   useEffect(() => {
     const getData = async () => {
@@ -38,15 +39,22 @@ export default function Home() {
       setAuthorLinks(authorLinks);
 
       const lists = await fetchTop10Lists(authorLinks);
-      console.log('Fetched lists:', lists); // Debugging-Ausgabe
+      console.log("Fetched lists:", lists); // Debugging-Ausgabe
 
       const aggregated = aggregateTop10Lists(lists);
       setTopSongs(aggregated);
-      console.log('Aggregated Top Songs:', aggregated); // Debugging-Ausgabe
+      console.log("Aggregated Top Songs:", aggregated); // Debugging-Ausgabe
 
       const mostFrequent = getMostFrequentSong(lists);
       setMostFrequentSong(mostFrequent);
-      console.log('Most Frequent Song:', mostFrequent); // Debugging-Ausgabe
+      console.log("Most Frequent Song:", mostFrequent); // Debugging-Ausgabe
+
+      // Create a map of author names to their top 10 lists
+      const authorTop10Map = {};
+      lists.forEach((list) => {
+        authorTop10Map[list.author] = list.top10;
+      });
+      setAuthorTop10s(authorTop10Map);
 
       setLoading(false);
     };
@@ -69,7 +77,12 @@ export default function Home() {
       previousPoints = points;
 
       return (
-        <li key={index} className={rank === 1 ? styles.songItem + ' ' + styles.first : styles.songItem}>
+        <li
+          key={index}
+          className={
+            rank === 1 ? styles.songItem + " " + styles.first : styles.songItem
+          }
+        >
           {rank}. {song} - {points} points
         </li>
       );
@@ -78,6 +91,28 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
+      <h2 className={styles.header}>Gewinner</h2>
+      <h3 className={styles.header}>Radioeins Sommersonntag</h3>
+
+      {loading ? (
+        <Loader />
+      ) : mostFrequentSong ? (
+        <div className={styles.frequentSong}>
+          <p>
+            <strong>{mostFrequentSong[0]}</strong> - {mostFrequentSong[1]}{" "}
+            mentions
+          </p>
+        </div>
+      ) : (
+        <p>No data available</p>
+      )}
+
+      <img
+        src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmRxcnA5NDBxcmUydnRnbDYwOHgxdHRua3hjMTczOW9odzR5bjcyMyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/WntXPfD9DB1rD45Nif/giphy.webp"
+        alt="Summer Fun"
+        className={styles.summerGif}
+      />
+
       <h1 className={styles.header}>Top 100 Songs</h1>
       {loading ? (
         <Loader />
@@ -91,29 +126,27 @@ export default function Home() {
         </ul>
       )}
 
-      <h2 className={styles.header}>Most Frequent Song</h2>
-      {loading ? (
-        <Loader />
-      ) : mostFrequentSong ? (
-        <div className={styles.frequentSong}>
-          <p>
-            <strong>{mostFrequentSong[0]}</strong> - {mostFrequentSong[1]} mentions
-          </p>
-        </div>
-      ) : (
-        <p>No data available</p>
-      )}
+      <img
+        src="https://i.gifer.com/4j.gif"
+        alt="Summer Beach"
+        className={styles.summerGif}
+      />
 
       <h2 className={styles.header}>Authors</h2>
       {loading ? (
         <Loader />
       ) : (
         <ul className={styles.authorList}>
-          {authorLinks.map((link, index) => (
+          {Object.entries(authorTop10s).map(([author, top10], index) => (
             <li key={index} className={styles.authorItem}>
-              <a href={link} target="_blank" rel="noopener noreferrer" className={styles.link}>
-                {link}
-              </a>
+              <h3>{author}</h3>
+              <ol>
+                {top10.map((entry, idx) => (
+                  <li key={idx}>
+                    {entry.rank}. {entry.artist} - {entry.song}
+                  </li>
+                ))}
+              </ol>
             </li>
           ))}
         </ul>
